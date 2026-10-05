@@ -1,0 +1,216 @@
+/* Waybar: стеклянные капсулы под burgundy-рамку из Hyprland.
+   Здесь только полупрозрачные цвета. Размытие фона включается
+   правилом layerrule в hyprland.conf. Цвет тратится только на состояния:
+   активный воркспейс, играющий плеер, подключённый bluetooth, зарядка, батарея. */
+
+@define-color glass     rgba(22, 14, 18, 0.38);
+@define-color text      #f4e9ed;
+@define-color dim       rgba(244, 233, 237, 0.42);
+@define-color accent    #800020;
+@define-color accent_hi #ff3369;
+@define-color warn      #ffb454;
+@define-color ok        #7ee0a1;
+
+* {
+    font-family: "JetBrainsMono Nerd Font", "Symbols Nerd Font", "Noto Sans", sans-serif;
+    font-size: 13px;
+    font-weight: 600;
+    border: none;
+    border-radius: 0;
+    min-height: 0;
+    box-shadow: none;
+    text-shadow: none;
+}
+
+/* сам бар полностью прозрачный, видны только капсулы */
+window#waybar {
+    background: transparent;
+    color: @text;
+}
+
+/* три капсулы: слева, по центру, справа */
+.modules-left,
+.modules-center,
+.modules-right {
+    background: @glass;
+    border-radius: 20px;
+    padding: 0 6px;
+    box-shadow: inset 0 0 0 1px rgba(255, 255, 255, 0.08);
+}
+
+/* нет открытых окон: центральная капсула не нужна */
+window#waybar.empty .modules-center {
+    background: transparent;
+    box-shadow: none;
+    padding: 0;
+}
+
+/* обычные модули */
+#custom-updates,
+#mpris,
+#window,
+#tray,
+#language,
+#pulseaudio,
+#network,
+#bluetooth,
+#battery,
+#clock,
+#custom-notification,
+#custom-jarvis {
+    color: @text;
+    padding: 0 10px;
+    margin: 4px 1px;
+    border-radius: 14px;
+    transition: background 0.2s ease-out, color 0.2s ease-out;
+}
+
+#custom-updates:hover,
+#mpris:hover,
+#language:hover,
+#pulseaudio:hover,
+#network:hover,
+#bluetooth:hover,
+#battery:hover,
+#clock:hover,
+#custom-notification:hover,
+#custom-jarvis:hover {
+    background: rgba(255, 255, 255, 0.08);
+}
+
+/* воркспейсы */
+#workspaces {
+    padding: 0 2px;
+}
+
+#workspaces button {
+    color: @dim;
+    background: transparent;
+    padding: 0 8px;
+    margin: 4px 1px;
+    border-radius: 14px;
+    transition: background 0.25s ease-out, color 0.25s ease-out;
+}
+
+#workspaces button.empty {
+    color: rgba(244, 233, 237, 0.24);
+}
+
+#workspaces button:hover {
+    color: @text;
+    background: rgba(255, 255, 255, 0.08);
+}
+
+#workspaces button.urgent {
+    color: @warn;
+}
+
+/* единственный яркий акцент в баре */
+#workspaces button.active {
+    color: #ffffff;
+    background: @accent;
+    box-shadow: inset 0 0 0 1px rgba(255, 51, 105, 0.55);
+    text-shadow: 0 0 8px rgba(255, 51, 105, 0.9);
+}
+
+/* состояния */
+#mpris.playing {
+    color: @accent_hi;
+}
+
+#mpris.paused,
+#pulseaudio.speaker.muted,
+#pulseaudio.microphone.source-muted,
+#network.disconnected,
+#network.disabled,
+#bluetooth.off,
+#bluetooth.disabled,
+#bluetooth.no-controller {
+    color: @dim;
+}
+
+#bluetooth.connected {
+    color: @accent_hi;
+}
+
+#battery.charging,
+#battery.plugged {
+    color: @ok;
+}
+
+#battery.warning:not(.charging) {
+    color: @warn;
+}
+
+#battery.critical:not(.charging) {
+    color: @accent_hi;
+    animation-name: blink;
+    animation-duration: 0.9s;
+    animation-timing-function: linear;
+    animation-iteration-count: infinite;
+    animation-direction: alternate;
+}
+
+@keyframes blink {
+    to {
+        background-color: rgba(255, 51, 105, 0.28);
+    }
+}
+
+/* трей */
+#tray > .passive {
+    -gtk-icon-effect: dim;
+}
+
+#tray > .needs-attention {
+    -gtk-icon-effect: highlight;
+}
+
+/* подсказки */
+tooltip {
+    background: rgba(22, 14, 18, 0.88);
+    border: 1px solid rgba(255, 255, 255, 0.10);
+    border-radius: 14px;
+}
+
+tooltip label {
+    color: @text;
+    padding: 2px 4px;
+}
+
+/* =========================================================
+   ПРАВАЯ ЧАСТЬ: разделяем облака, ЛЕВУЮ НЕ ТРОГАЕМ
+   ========================================================= */
+
+/* Убираем только общий фон правой группы. */
+.modules-right {
+    background: transparent;
+    border-radius: 0;
+    padding: 0;
+    box-shadow: none;
+}
+
+/* Каждый модуль внутри правой группы — отдельное облачко.
+   Так .modules-left и .modules-center выше остаются 1:1 как были. */
+.modules-right > * {
+    background: @glass;
+    border-radius: 14px;
+    box-shadow: inset 0 0 0 1px rgba(255, 255, 255, 0.08);
+}
+
+/* Небольшой зазор между отдельными облачками справа. */
+.modules-right > * + * {
+    margin-left: 5px;
+}
+
+/* Убираем внутренние двойные отступы/фон только у самого контейнера tray,
+   но сохраняем размер иконок. */
+.modules-right #tray {
+    padding-left: 10px;
+    padding-right: 10px;
+}
+
+/* Hover теперь работает у каждого правого облачка отдельно. */
+.modules-right > *:hover {
+    background: rgba(255, 255, 255, 0.08);
+}
