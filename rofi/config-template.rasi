@@ -1,0 +1,29 @@
+configuration {
+    modi:                       "drun,run,window";
+    show-icons:                 true;
+    display-drun:               "";
+    display-run:                "";
+    display-window:             "";
+    drun-display-format:        "{name}";
+    window-format:              "{w} · {c} · {t}";
+}
+
+@theme "ib"
+
+// color pallete
+* {
+    font:                        "SpaceMono Nerd Font 12";
+    background:                  {{color-background}};
+    background-alt:              {{color-background-alt}};
+    foreground:                  {{color-foreground}};
+    selected:                    {{color-selected}};
+    active:                      {{color-active}};
+    urgent:                      {{color-urgent}};
+}
+
+// theme image (image height is set via y-padding)
+inputbar {
+    background-image:            url("{{url-background}}", width);
+    padding:                     {{background-half-height}}px 60px;
+}
+
