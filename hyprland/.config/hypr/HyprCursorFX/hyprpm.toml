@@ -1,0 +1,9 @@
+[repository]
+name = "HyprCursorFX"
+authors = ["HyprCursorFX contributors"]
+
+[hyprcursorfx]
+description = "Global cursor trails and particle effects for Hyprland"
+authors = ["HyprCursorFX contributors"]
+output = "hyprcursorfx.so"
+build = ["make"]
